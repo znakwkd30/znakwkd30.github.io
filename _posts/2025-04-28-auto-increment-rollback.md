@@ -7,14 +7,14 @@ title: "AUTO_INCREMENT KEY는 ROLLBACK 가능할까?"
 
 예를 들어 아래의 쿼리를 실행하고
 
-```SQL
+```
 START TRANSACTION;
 INSERT INTO users (name) VALUES ('Alice');
 ROLLBACK;
 ```
 
 그 다음 아래와 같은 쿼리를 실행하면 어떤 결과가 나올까요?
-```SQL
+```
 INSERT INTO users (name) VALUES ('Bob');
 ```
 
@@ -37,7 +37,7 @@ ID가 1부터 시작한다고 했을때 1은 SKIP 되고 ID 2로 insert 되는�
 
 만약 이 AUTO_INCREMENT KEY를 FK 이면서 PK로 사용하는 다른 테이블에서는 의도하지 않은 값 건너뛰기나 고아 레코드가 생길 수 있게 됩니다.
 
-```SQL
+```
 -- 부모 테이블
 CREATE TABLE users (
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -56,7 +56,7 @@ CREATE TABLE user_profiles (
 
 아래의 SQL을 실행했을때는 어떻게 될까요?
 
-```SQL
+```
 START TRANSACTION;
 INSERT INTO users (name) VALUES ('Charlie'); -- id = 3
 INSERT INTO user_profiles (id, bio) VALUES (3, 'Hi');
