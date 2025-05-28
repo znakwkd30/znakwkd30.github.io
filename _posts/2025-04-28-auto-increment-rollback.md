@@ -13,7 +13,7 @@ INSERT INTO users (name) VALUES ('Alice');
 ROLLBACK;
 ```
 
-이후에 아래의 쿼리를 실행하면 어떻게 될까요?
+그 다음 아래와 같은 쿼리를 실행하면 어떤 결과가 나올까요?
 ```SQL
 INSERT INTO users (name) VALUES ('Bob');
 ```
@@ -25,7 +25,7 @@ ID가 1부터 시작한다고 했을때 1은 SKIP 되고 ID 2로 insert 되는�
 
 1. 성능 최적화
 * AUTO_INCREMENT 값을 할당할 때마다 트랜잭션 커밋 여부를 기다리면 성능이 상당히 떨어지게 됩니다. 특히 동시성이 높은 시스템에서는 해당 처리가 병목이 될 수 있습니다.
-그래서 MYSQL은 insert 시점에 바로 ID를 할당하고 ROLLBACK 되더라도 그 값은 사용한 것으로 처리합니다.
+그래서 MYSQL은 insert 시점에 바로 ID를 할당하고 ROLLBACK 되더라도 AUTO_INCREMENT 값은 소모된 것으로 간주되어 다시 사용되지 않습니다.
 
 2. 동시성 문제
 * 여러 트랜잭션이 동시에 insert를 시도하고 있을때 ROLLBACK 시마다 AUTO_INCREMENT 값을 되돌리면 Race Condition이나 충돌이 자주 발생하게 됩니다.
@@ -65,8 +65,8 @@ ROLLBACK;
 ```
 
 users insert 에 실패하거나 롤백되면
-users_profiles.id = 3 만 남는 고아 레코드 발생 가능성이 생깁니다.
-(롤백 되긴 하겠지만, 순서 문제로 잠깐 생겼다가 롤백되는 상황도 있을 수 있습니다.)
+users_profiles.id = 3 만 남게되는데 잠깐 동안 고아 레코드가 생성될 수 있습니다.
+(이는 트랜잭션 롤백으로 정리되지만 설계상 주의가 필요합니다.)
 
 이와 같은 문제를 해결 하기 위해서는 아래와 같은 방법이 있습니다.
 
